@@ -1,0 +1,13 @@
+<span style="font-size:6px"><br></span>
+  </div>
+  </td>
+  <td width="1" bgcolor="CCCCCC"></td>
+  <td width="579" valign="top">
+  <span style="font-size:6px"><br></span>
+<div align="left" style="padding: 0 0 0 10">
+{{#if all}}
+<h2>Choose A Subject To Modify:</h2>
+{{/if}}
+{{#each all}}
+    <a href="/modify/{{id}}" class="href-display">{{title}}</a></br>
+{{/each}}
