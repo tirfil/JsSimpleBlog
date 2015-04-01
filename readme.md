@@ -1,11 +1,31 @@
+JsSimpleBlog
+============
+simple "blog" server using node.js + express + handlebars + sqlite3
 
-Installer node.js et npm.
-Installer sqlite3
-Installer node-sqlite3
-Dans le répertoire principale taper:
+============
+Installation Instructions:
+--------------------------
+
+Install node.js and npm /
+Install sqlite3 /
+Install node-sqlite3
+
+**In the main directory enter:**
+
 npm install
-ensuite lancer le programme:
+
+**To start the server:**
+
 node server.js
 
-Par défaut: 
-se connecter avec un navigateur sur le port 3000
+**Connect your browser on port 3000 (default)**
+
+Features:
+---------
+Add, Modify and Display item(s)
+
+Delete item (modify + erase title)
+
+Change item position (modify + position). Items are displayed using ascending position order.
+
+Extract file (RTF format)
