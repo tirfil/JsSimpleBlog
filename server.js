@@ -4,11 +4,12 @@ var app = express();
 var fs = require("fs");
 var file = 'database.db';
 var exists = fs.existsSync(file);
-var sqlite3 = require("sqlite3").verbose();
-var db = new sqlite3.Database(file);
-var database = require("./database_sqlite.js");
+//var sqlite3 = require("sqlite3").verbose();
+//var db = new sqlite3.Database(file);
+var Database = require("./database_sqlite.js");
+var database = new Database(file);
 if (!exists) {
-    database.create(db);
+    database.create();
 }
 
 function nl2br (str, is_xhtml) {
@@ -63,7 +64,7 @@ app.use(bodyParser.urlencoded({
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
-    database.queryall(db,function(all){
+    database.queryall(function(all){
         for (var i=0; i < all.length; i++)
         {
             all[i].description = nl2br(all[i].description);
@@ -77,7 +78,7 @@ app.get('/add',function(req,res){
 });
 
 app.get('/display',function(req,res){
-    database.queryall(db,function(all){
+    database.queryall(function(all){
         for (var i=0; i < all.length; i++)
         {
             all[i].description = nl2br(all[i].description);
@@ -87,7 +88,7 @@ app.get('/display',function(req,res){
 });
 
 app.get('/rtf',function(req,res){
-    database.queryall(db,function(all){
+    database.queryall(function(all){
         var buffer = '{\\rtf1\\ansi\\ansicpg1252\n\
 {\\fonttbl\n\
 {\\f1\\fswiss\\fcharset0\\fprq0\\fttruetype "Arial";}\n\
@@ -119,7 +120,7 @@ app.get('/rtf',function(req,res){
 
 app.get('/modify/:id',function(req,res){
     var id = req.params.id;
-    database.query(db,id,function(row){
+    database.query(id,function(row){
         //console.log(row.title);
         res.render('modifyf',{row: row});
     })
@@ -127,7 +128,7 @@ app.get('/modify/:id',function(req,res){
 });
 
 app.get('/modify',function(req,res){
-    database.queryall(db,function(all){
+    database.queryall(function(all){
         res.render('modify',{all: all});
     });
     
@@ -138,7 +139,7 @@ app.post('/modifydb',function(req,res){
     var description = req.body.description;
     var level = req.body.level;
     var id = req.body.id;
-    database.update(db,title,description,level,id);
+    database.update(title,description,level,id);
     res.redirect(303,'/modify');
 });
 
@@ -147,7 +148,7 @@ app.post('/adddb',function(req,res){
     var title = req.body.title;
     var description = req.body.description;
     if (title){
-        database.add(db,title,description);
+        database.add(title,description);
     }
     res.redirect(303,'/display');
 });
