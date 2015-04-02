@@ -1,12 +1,12 @@
 var express = require('express');
-var app = express();
-
 var fs = require("fs");
-var file = 'database.db';
-var exists = fs.existsSync(file);
-//var sqlite3 = require("sqlite3").verbose();
-//var db = new sqlite3.Database(file);
 var Database = require("./database_sqlite.js");
+var config = require("./config.js");
+
+var app = express();
+var file = config.file;
+var exists = fs.existsSync(file);
+
 var database = new Database(file);
 if (!exists) {
     database.create();
@@ -48,14 +48,13 @@ function convert4rtf(str) {
     return result;
 }
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || config.port || 3000);
 
 // set up handlebars view engine
 var handlebars = require('express3-handlebars').create({ defaultLayout:'main' });
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
-//app.use(require('body-parser')());
 var bodyParser  = require('body-parser');
 app.use(bodyParser.urlencoded({
   extended: true
@@ -121,7 +120,6 @@ app.get('/rtf',function(req,res){
 app.get('/modify/:id',function(req,res){
     var id = req.params.id;
     database.query(id,function(row){
-        //console.log(row.title);
         res.render('modifyf',{row: row});
     })
     
@@ -156,8 +154,8 @@ app.post('/adddb',function(req,res){
 
 // 404 catch-all handler (middleware)
 app.use(function(req, res, next){
-res.status(404);
-res.render('404');
+    res.status(404);
+    res.render('404');
 });
 // 500 error handler (middleware)
 app.use(function(err, req, res, next){
