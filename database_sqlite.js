@@ -74,4 +74,12 @@ Database.prototype.update = function(title,description,level,id){
     });
 };
 
+Database.prototype.deleteall = function(){
+    console.log("delete all database");
+    var db = this.db;
+    db.serialize(function(){
+        db.run("DELETE FROM items");
+    });
+}
+
 module.exports = Database;
