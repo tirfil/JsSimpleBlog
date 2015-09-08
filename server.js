@@ -154,7 +154,7 @@ app.post('/adddb',function(req,res){
 app.get('/reset',function(req,res){
     var code = req.query.code;
     if (code == "confirm") {
-        database.deleteall(db,function(){
+        database.deleteall(function(){
         });
     }
     res.redirect(303,'/display');
