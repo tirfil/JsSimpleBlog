@@ -3,6 +3,8 @@
     "express": "^4.0.0",
     "express3-handlebars": "^0.5.0",
     "sqlite3":"*",
-    "body-parser":"*"
+    "body-parser":"*",
+    "express-session":"*",
+    "cookie-parser":"*"
     }
 }
