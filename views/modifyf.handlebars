@@ -5,15 +5,15 @@
   <td width="579" valign="top">
   <span style="font-size:6px"><br></span>
 <div align="left" style="padding: 0 0 0 10">
-<h2>Editer un sujet:</h2>
+<h2>_EDIT_SUBJECT_</h2>
 <form class="add-form" action="/modifydb" method="POST">
-    <label class="labelform">Title:</label></br>
+    <label class="labelform">_TITLE_</label></br>
     <input type="text"  size="60" class="title-form" name="title" value="{{row.title}}"></br>
-    <label class="labelform">Description:</label></br>
+    <label class="labelform">_DESCRIPTION_</label></br>
     <textarea name="description" rows="25" cols="60">{{row.description}}</textarea></br>
-    <label class="labelform">Position:</label></br>
+    <label class="labelform">_POSITION_</label></br>
     <input type="text" name="level" value="{{row.level}}"></br>
     <input type="hidden" name="id" value="{{row.id}}">
-    <button type="submit" class="button-form">Update!</button>
+    <button type="submit" class="button-form">_UPDATE_</button>
 </form>
 </div>
