@@ -48,6 +48,14 @@ function convert4rtf(str) {
     return result;
 }
 
+function checkAuth(req, res, next) {
+  if (!req.session.user_id) {
+    res.render('unauthorized',{layout: 'simple'});
+  } else {
+    next();
+  }
+}
+
 app.set('port', process.env.PORT || config.port || 3000);
 
 // set up handlebars view engine
@@ -60,23 +68,22 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+var expressSession = require('express-session');
+//var cookieParser = require('cookie-parser'); 
+//app.use(cookieParser());
+app.use(expressSession({ secret: 'MY_SECRET' }));
+
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
-    database.queryall(function(all){
-        for (var i=0; i < all.length; i++)
-        {
-            all[i].description = nl2br(all[i].description);
-        }
-        res.render('display',{all: all});
-    });
+	res.render('login',{layout: 'simple'});
 });
 
-app.get('/add',function(req,res){
+app.get('/add',checkAuth, function(req,res){
     res.render('addf');
 });
 
-app.get('/display',function(req,res){
+app.get('/display',checkAuth, function(req,res){
     database.queryall(function(all){
         for (var i=0; i < all.length; i++)
         {
@@ -86,7 +93,7 @@ app.get('/display',function(req,res){
     });
 });
 
-app.get('/rtf',function(req,res){
+app.get('/rtf',checkAuth, function(req,res){
     database.queryall(function(all){
         var buffer = '{\\rtf1\\ansi\\ansicpg1252\n\
 {\\fonttbl\n\
@@ -117,7 +124,7 @@ app.get('/rtf',function(req,res){
     });
 });
 
-app.get('/modify/:id',function(req,res){
+app.get('/modify/:id',checkAuth, function(req,res){
     var id = req.params.id;
     database.query(id,function(row){
         res.render('modifyf',{row: row});
@@ -125,14 +132,14 @@ app.get('/modify/:id',function(req,res){
     
 });
 
-app.get('/modify',function(req,res){
+app.get('/modify',checkAuth, function(req,res){
     database.queryall(function(all){
         res.render('modify',{all: all});
     });
     
 });
 
-app.post('/modifydb',function(req,res){
+app.post('/modifydb',checkAuth, function(req,res){
     var title = req.body.title;
     var description = req.body.description;
     var level = req.body.level;
@@ -142,7 +149,7 @@ app.post('/modifydb',function(req,res){
 });
 
 
-app.post('/adddb',function(req,res){
+app.post('/adddb',checkAuth, function(req,res){
     var title = req.body.title;
     var description = req.body.description;
     if (title){
@@ -151,7 +158,7 @@ app.post('/adddb',function(req,res){
     res.redirect(303,'/display');
 });
 
-app.get('/reset',function(req,res){
+app.get('/reset',checkAuth, function(req,res){
     var code = req.query.code;
     if (code == "confirm") {
         database.deleteall(function(){
@@ -160,16 +167,27 @@ app.get('/reset',function(req,res){
     res.redirect(303,'/display');
 });
 
+app.post('/login', function (req, res) {
+  var post = req.body;
+  if (post.user === 'user' && post.password === 'password') {
+    req.session.user_id = 1000;
+    res.redirect('/display');
+  } else {
+    res.render('loginfailed',{layout: "simple"});
+  }
+});
+
+
 // 404 catch-all handler (middleware)
 app.use(function(req, res, next){
     res.status(404);
-    res.render('404');
+    res.render('404',{layout: "simple"});
 });
 // 500 error handler (middleware)
 app.use(function(err, req, res, next){
     console.error(err.stack);
     res.status(500);
-    res.render('500');
+    res.render('500',{layout: "simple"});
 });
 
 app.listen(app.get('port'), function(){
